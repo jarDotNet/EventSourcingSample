@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <UserSecretsId>a35d6639-03e6-4d03-91f8-4507187ba5e3</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="EventSourcingSample.http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="8.1.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.1.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EventSourcingSample.EventSourcing\EventSourcingSample.EventSourcing.csproj" />
+    <ProjectReference Include="..\EventSourcingSample.ROP\EventSourcingSample.ROP.csproj" />
+  </ItemGroup>
+
+</Project>
