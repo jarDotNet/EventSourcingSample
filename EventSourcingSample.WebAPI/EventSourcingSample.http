@@ -1,11 +1,42 @@
 @EventSourcingSample_HostAddress = http://localhost:5263
 
-GET {{EventSourcingSample_HostAddress}}/todos/
+POST {{EventSourcingSample_HostAddress}}/orders
 Accept: application/json
+Content-Type: application/json
+
+{
+  "deliveryDetails": {
+    "street": "string",
+    "city": "string",
+    "country": "string"
+  },
+  "paymentInformation": {
+    "cardNumber": "string",
+    "expireDate": "string",
+    "security": "string"
+  },
+  "products": [
+    {
+      "productId": 0,
+      "quantity": 0
+    }
+  ]
+}
 
 ###
 
-GET {{EventSourcingSample_HostAddress}}/todos/1
-Accept: application/json
+@orderId=string($uuid)
+GET {{EventSourcingSample_HostAddress}}/orders/{{orderId}}
+
+###
+
+PUT {{EventSourcingSample_HostAddress}}/orders/{{orderId}}/mark-as-paid
+
+###
+PUT {{EventSourcingSample_HostAddress}}/orders/{{orderId}}/mark-as-delivered
+
+###
+
+PUT {{EventSourcingSample_HostAddress}}/orders/{{orderId}}/mark-as-dispatched
 
 ###
