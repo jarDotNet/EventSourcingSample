@@ -22,18 +22,35 @@ public sealed class MarkOrderAsDispatched
 
         public async Task<Result<Unit>> Handle(Guid orderId, CancellationToken cancellationToken = default)
         {
+            return await GetOrderDetails(orderId, cancellationToken)
+                .Bind(ApplyOrderDispatchedEvent)
+                .Bind(x => SaveOrder(x, cancellationToken));
+        }
+
+        private async Task<Result<OrderDetails>> GetOrderDetails(Guid orderId, CancellationToken cancellationToken = default)
+        {
             var orderDetails = await _orderRepository.GetById(orderId, cancellationToken);
             if (orderDetails is null)
             {
-                return Result.NotFound($"Order {orderId} not found");
+                return Result.NotFound<OrderDetails>($"Order {orderId} not found");
             }
             if (orderDetails.Status != OrderStatus.Paid)
             {
-                return Result.Failure($"Order {orderId} with status {orderDetails.Status} cannot be set as Dispatched");
+                return Result.Failure<OrderDetails>($"Order {orderId} with status {orderDetails.Status} cannot be set as Dispatched");
             }
 
+            return orderDetails;
+        }
+
+        private static Result<OrderDetails> ApplyOrderDispatchedEvent(OrderDetails orderDetails)
+        {
             orderDetails.Apply(new OrderDispatched());
 
+            return orderDetails;
+        }
+
+        private async Task<Result<Unit>> SaveOrder(OrderDetails orderDetails, CancellationToken cancellationToken = default)
+        {
             await _orderRepository.Save(orderDetails, cancellationToken);
 
             return Result.Success();
