@@ -300,7 +300,7 @@ public sealed class CreateOrder
             return await CreateOrder(createOrder)
                 .Async()
                 .Bind(x => SaveOrder(x, cancellationToken))
-                .Bind(x => MapToOrderResponse(x))
+                .Bind(MapToOrderResponse)
                 .Map(x => new CreateOrderResponse(x.OrderId, $"order/getorderstatus/{x.OrderId}"));
         }
 
@@ -358,7 +358,7 @@ When saving the `AggregateChangeDto` information, we create an index in MongoDb 
 
 The Secret Manager tool was used to store the connection string to MongoDB. This allows to keep sensitive information out of the source code and provides a way to manage secrets in a secure manner during development.
 
-## Enable secret storage
+### Enable secret storage
 
 The Secret Manager tool operates on project-specific configuration settings stored in the user profile.
 
@@ -375,7 +375,7 @@ This command adds a `UserSecretsId` element within a `PropertyGroup` of the proj
 > [!NOTE]
 > The `EventSourcingSample.WebAPI` project already has the `UserSecretsId` element in the project file. If you create a new project, you can add this element manually or use the `dotnet user-secrets init` command to generate it automatically.
 
-## Set a secret
+### Set a secret
 
 Define an app secret consisting of a key and its value. The secret is associated with the project's `UserSecretsId` value. So, run the following command from the `EventSourcingSample.WebAPI` directory to add your own connection string to MongoDB:
 
@@ -385,7 +385,7 @@ dotnet user-secrets set "MongoDb:ConnectionString" "mongodb+srv://<username>:<db
 
 This configuration setting is used in the `MongoDbConnectionProvider` class in order to establish a connection to the MongoDB database. Thus, the connection string is retrieved from the secret storage at runtime.
 
-## List the secrets
+### List the secrets
 
 Run the following command from the directory in which the project file exists:
 
@@ -393,7 +393,7 @@ Run the following command from the directory in which the project file exists:
 dotnet user-secrets list
 ```
 
-## Remove a single secret
+### Remove a single secret
 
 In case the secret needs to be removed, run the following command from the directory in which the project file exists:
 ```bash
