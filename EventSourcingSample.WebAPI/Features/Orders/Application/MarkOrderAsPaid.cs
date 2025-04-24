@@ -11,7 +11,7 @@ public sealed class MarkOrderAsPaid
         Task<Result<Unit>> Handle(Guid orderId, CancellationToken cancellationToken = default);
     }
 
-    public class MarkOrderAsPaidHandler : IMarkOrderAsPaidHandler
+    internal class MarkOrderAsPaidHandler : IMarkOrderAsPaidHandler
     {
         private readonly IOrderRepository _orderRepository;
 

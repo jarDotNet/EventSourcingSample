@@ -16,7 +16,7 @@ public sealed class CreateOrder
         Task<Result<CreateOrderResponse>> Handle(CreateOrderRequest createOrder, CancellationToken cancellationToken = default);
     }
 
-    public class CreateOrderHandler : ICreateOrderHandler
+    internal class CreateOrderHandler : ICreateOrderHandler
     {
         private readonly IOrderRepository _orderRepository;
 
