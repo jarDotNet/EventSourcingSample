@@ -2,7 +2,6 @@
 using EventSourcingSample.WebAPI.Features.Orders.Application.Shared;
 using EventSourcingSample.WebAPI.Features.Orders.Domain.Aggregates;
 using EventSourcingSample.WebAPI.Features.Orders.Domain.Events;
-using static EventSourcingSample.WebAPI.Features.Orders.Application.GetOrder;
 
 namespace EventSourcingSample.WebAPI.Features.Orders.Application;
 
@@ -31,8 +30,7 @@ public sealed class CreateOrder
             return await CreateOrder(createOrder)
                 .Async()
                 .Bind(x => SaveOrder(x, cancellationToken))
-                .Bind(MapToOrderResponse)
-                .Map(x => new CreateOrderResponse(x.OrderId, $"order/getorderstatus/{x.OrderId}"));
+                .Map(x => new CreateOrderResponse(x.Id, $"orders/{x.Id}"));
         }
 
         private static Result<OrderDetails> CreateOrder(CreateOrderRequest createOrder)
@@ -49,16 +47,6 @@ public sealed class CreateOrder
         {
             await _orderRepository.Save(orderDetails, cancellationToken);
             return orderDetails;
-        }
-
-        private static Result<GetOrderResponse> MapToOrderResponse(OrderDetails orderDetails)
-        {
-            var products = orderDetails.Products
-                .Select(p => new ProductQuantityName(p.ProductId, p.Quantity, $"Product {p.ProductId}"));           
-
-            var orderResponse = new GetOrderResponse(orderDetails.Id, orderDetails.Status.ToString(),
-                orderDetails.Delivery, orderDetails.PaymentInformation, products);
-            return orderResponse;
         }
     }
 }
