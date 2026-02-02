@@ -141,6 +141,7 @@ That information is what you can see in the `AggregateChange` and `AggregateChan
 - `AggregateType`: to know what type it is.
 - `Version`: version of the aggregate, each new event adds 1 to the version number.
 - `TransactionId`: combination between the Id and the version.
+- `Created:` date of creation of the event.
 
 The `AggregateRepository<TAggregate>` class contains two methods and must be implemented by each repository:
 
