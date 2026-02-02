@@ -11,7 +11,7 @@ public sealed class MarkOrderAsDelivered
         Task<Result<Unit>> Handle(Guid orderId, CancellationToken cancellationToken = default);
     }
 
-    public class MarkOrderAsDeliveredHandler : IMarkOrderAsDeliveredHandler
+    internal class MarkOrderAsDeliveredHandler : IMarkOrderAsDeliveredHandler
     {
         private readonly IOrderRepository _orderRepository;
 

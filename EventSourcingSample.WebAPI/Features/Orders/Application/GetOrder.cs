@@ -16,7 +16,7 @@ public sealed class GetOrder
         Task<Result<GetOrderResponse>> Handle(Guid orderId, CancellationToken cancellationToken = default);
     }
 
-    public class GetOrderHandler : IGetOrderHandler
+    internal class GetOrderHandler : IGetOrderHandler
     {
         private readonly IOrderRepository _orderRepository;
 
