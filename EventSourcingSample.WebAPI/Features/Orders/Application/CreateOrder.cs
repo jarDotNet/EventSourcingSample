@@ -31,7 +31,7 @@ public sealed class CreateOrder
             return await CreateOrder(createOrder)
                 .Async()
                 .Bind(x => SaveOrder(x, cancellationToken))
-                .Bind(x => MapToOrderResponse(x))
+                .Bind(MapToOrderResponse)
                 .Map(x => new CreateOrderResponse(x.OrderId, $"order/getorderstatus/{x.OrderId}"));
         }
 
