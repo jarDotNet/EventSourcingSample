@@ -47,7 +47,7 @@ public class OrdersController
 
     [HttpPost("")]
     [ProducesResponseType(typeof(ResultDto<CreateOrderResponse>), (int)HttpStatusCode.Created)]
-    public async Task<IActionResult> CreateOrder(CreateOrderRequest createOrderRequest, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreateOrder(CreateOrderCommand createOrderRequest, CancellationToken cancellationToken = default)
     {
         return await _createOrderHandler.Handle(createOrderRequest, cancellationToken)
             .UseSuccessHttpStatusCode(HttpStatusCode.Created)

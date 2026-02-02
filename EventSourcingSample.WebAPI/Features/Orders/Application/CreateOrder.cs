@@ -7,13 +7,13 @@ namespace EventSourcingSample.WebAPI.Features.Orders.Application;
 
 public sealed class CreateOrder
 {
-    public record CreateOrderRequest(DeliveryDetails DeliveryDetails, PaymentInformation PaymentInformation, IEnumerable<ProductQuantity> Products);
+    public record CreateOrderCommand(DeliveryDetails DeliveryDetails, PaymentInformation PaymentInformation, IEnumerable<ProductQuantity> Products);
 
     public record CreateOrderResponse(Guid OrderId, string Location);
 
     public interface ICreateOrderHandler
     {
-        Task<Result<CreateOrderResponse>> Handle(CreateOrderRequest createOrder, CancellationToken cancellationToken = default);
+        Task<Result<CreateOrderResponse>> Handle(CreateOrderCommand createOrder, CancellationToken cancellationToken = default);
     }
 
     internal class CreateOrderHandler : ICreateOrderHandler
@@ -25,7 +25,7 @@ public sealed class CreateOrder
             _orderRepository = orderRepository;
         }
 
-        public async Task<Result<CreateOrderResponse>> Handle(CreateOrderRequest createOrder, CancellationToken cancellationToken = default)
+        public async Task<Result<CreateOrderResponse>> Handle(CreateOrderCommand createOrder, CancellationToken cancellationToken = default)
         {
             return await CreateOrder(createOrder)
                 .Async()
@@ -33,7 +33,7 @@ public sealed class CreateOrder
                 .Map(x => new CreateOrderResponse(x.Id, $"orders/{x.Id}"));
         }
 
-        private static Result<OrderDetails> CreateOrder(CreateOrderRequest createOrder)
+        private static Result<OrderDetails> CreateOrder(CreateOrderCommand createOrder)
         {
             Guid createdOrderId = Guid.NewGuid();
 
