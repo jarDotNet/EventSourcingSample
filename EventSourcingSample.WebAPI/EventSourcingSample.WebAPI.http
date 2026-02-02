@@ -1,0 +1,43 @@
+﻿@EventSourcingSample.WebAPI_HostAddress = http://localhost:5263
+
+POST {{EventSourcingSample.WebAPI_HostAddress}}/orders
+Accept: application/json
+Content-Type: application/json
+
+{
+  "deliveryDetails": {
+    "street": "string",
+    "city": "string",
+    "country": "string"
+  },
+  "paymentInformation": {
+    "cardNumber": "string",
+    "expireDate": "string",
+    "security": "string"
+  },
+  "products": [
+    {
+      "productId": 0,
+      "quantity": 0
+    }
+  ]
+}
+
+###
+
+@orderId=string($uuid)
+GET {{EventSourcingSample.WebAPI_HostAddress}}/orders/{{orderId}}
+
+###
+
+PUT {{EventSourcingSample.WebAPI_HostAddress}}/orders/{{orderId}}/mark-as-paid
+
+###
+PUT {{EventSourcingSample.WebAPI_HostAddress}}/orders/{{orderId}}/mark-as-delivered
+
+###
+
+PUT {{EventSourcingSample.WebAPI_HostAddress}}/orders/{{orderId}}/mark-as-dispatched
+
+###
+
