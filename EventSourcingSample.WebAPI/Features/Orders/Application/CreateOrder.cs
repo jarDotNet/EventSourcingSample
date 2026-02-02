@@ -1,0 +1,64 @@
+﻿using EventSourcingSample.ROP;
+using EventSourcingSample.WebAPI.Features.Orders.Application.Shared;
+using EventSourcingSample.WebAPI.Features.Orders.Domain.Aggregates;
+using EventSourcingSample.WebAPI.Features.Orders.Domain.Events;
+using static EventSourcingSample.WebAPI.Features.Orders.Application.GetOrder;
+
+namespace EventSourcingSample.WebAPI.Features.Orders.Application;
+
+public sealed class CreateOrder
+{
+    public record CreateOrderRequest(DeliveryDetails DeliveryDetails, PaymentInformation PaymentInformation, IEnumerable<ProductQuantity> Products);
+
+    public record CreateOrderResponse(Guid OrderId, string Location);
+
+    public interface ICreateOrderHandler
+    {
+        Task<Result<CreateOrderResponse>> Handle(CreateOrderRequest createOrder, CancellationToken cancellationToken = default);
+    }
+
+    public class CreateOrderHandler : ICreateOrderHandler
+    {
+        private readonly IOrderRepository _orderRepository;
+
+        public CreateOrderHandler(IOrderRepository orderRepository)
+        {
+            _orderRepository = orderRepository;
+        }
+
+        public async Task<Result<CreateOrderResponse>> Handle(CreateOrderRequest createOrder, CancellationToken cancellationToken = default)
+        {
+            return await CreateOrder(createOrder)
+                .Async()
+                .Bind(x => SaveOrder(x, cancellationToken))
+                .Bind(x => MapToOrderResponse(x))
+                .Map(x => new CreateOrderResponse(x.OrderId, $"order/getorderstatus/{x.OrderId}"));
+        }
+
+        private static Result<OrderDetails> CreateOrder(CreateOrderRequest createOrder)
+        {
+            Guid createdOrderId = Guid.NewGuid();
+
+            var orderDetails = new OrderDetails(createdOrderId);
+            orderDetails.Apply(new OrderCreated(createOrder.DeliveryDetails, createOrder.PaymentInformation, createOrder.Products));
+
+            return orderDetails;
+        }
+
+        private async Task<Result<OrderDetails>> SaveOrder(OrderDetails orderDetails, CancellationToken cancellationToken)
+        {
+            await _orderRepository.Save(orderDetails, cancellationToken);
+            return orderDetails;
+        }
+
+        private static Result<GetOrderResponse> MapToOrderResponse(OrderDetails orderDetails)
+        {
+            var products = orderDetails.Products
+                .Select(p => new ProductQuantityName(p.ProductId, p.Quantity, $"Product {p.ProductId}"));           
+
+            var orderResponse = new GetOrderResponse(orderDetails.Id, orderDetails.Status.ToString(),
+                orderDetails.Delivery, orderDetails.PaymentInformation, products);
+            return orderResponse;
+        }
+    }
+}
